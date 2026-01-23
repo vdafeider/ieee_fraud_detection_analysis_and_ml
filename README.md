@@ -332,6 +332,7 @@ Especially welcome:
 * Additional strong features (time-based, card grouping, interaction terms)
 * Alternative models (TabNet, NN, stacking) or Deep Learning
 * Better handling of high-cardinality categoricals
+* Create a dynamic threshold that changes depending on the transaction amount to minimize losses
 
 Please follow best practices:
 - Fork the repository
