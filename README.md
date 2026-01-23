@@ -12,14 +12,23 @@ The notebook performs deep EDA, feature engineering, careful leakage-free prepro
 
 ## Table of Contents
 
+## Table of Contents
+
 - [Project Overview](#project-overview)
 - [Objectives](#objectives)
 - [Dataset](#dataset)
 - [Notebook Structure](#notebook-structure)
 - [Key Findings](#key-findings)
 - [Machine Learning Model](#machine-learning-model)
-- [Feature Engineering Approach](feature-engineering-approach)
+- [Feature Engineering Approach](#feature-engineering-approach)
+- [Project Rationale & Hypotheses](#project-rationale--hypotheses)
+- [Statistics & Probability Foundations](#statistics--probability-foundations)
+- [AI Assistant Integration](#ai-assistant-integration)
+- [Data Management Practices](#data-management-practices)
+- [Domain Applications of Fraud Analytics](#domain-applications-of-fraud-analytics)
 - [Ethical Considerations, Data Privacy & Governance](#ethical-considerations-data-privacy--governance)
+- [Project Plan & Maintenance Roadmap](#project-plan--maintenance-roadmap)
+- [Limitations, Alternatives & Future Learning](#limitations-alternatives--future-learning)
 - [Requirements](#requirements)
 - [How to Reproduce](#how-to-reproduce)
 - [Contributing](#contributing)
@@ -245,6 +254,98 @@ The strongest single contributors to PR-AUC improvement were:
 - Missing identity & high-missing flags
 - Email domain provider frequencies
 - Resolution invalid flag & parsing
+  
+---
+
+## Project Rationale & Hypotheses
+
+This project addresses real-world online payment fraud detection using the IEEE-CIS Fraud Detection dataset — a critical problem in e-commerce and banking that causes billions in annual losses and erodes consumer trust. The goal is to build a reliable classifier that identifies fraudulent transactions while minimizing false positives (which frustrate legitimate users).
+
+**Key Hypotheses** (tested in notebook):
+- H1: Transactions lacking identity information (`has_identity` = 0) show significantly higher fraud rates.
+  → H not validated: Transactions with available identity information exhibit a significantly higher fraud rate (≈8%) compared to those without identity data (≈2%).
+- H2: Rare or unknown `DeviceInfo` values correlate with elevated fraud probability.
+  → Validated: `DeviceInfo_risk` became the dominant feature; rare devices strongly signal risk.
+- H3: Unusual screen resolutions (e.g. "0x0" or low-res) are associated with fraud.
+  → Validated: `id_33_is_invalid` flag and parsed dimensions show clear fraud elevation.
+- H4: Certain email providers/TLDs (e.g. Outlook, .se) are riskier than others.
+  → Partially validated: frequency-encoded providers and TLDs contribute meaningfully.
+
+These hypotheses guided feature engineering and model interpretation.
+
+## Statistics & Probability Foundations
+
+Core statistical and probabilistic concepts were applied throughout the analysis:
+
+- **Descriptive statistics**: mean, median, standard deviation used to summarize `TransactionAmt`, missing ratios, and fraud rates (e.g. overall fraud rate ≈3.5%).
+- **Probability & imbalance**: severe class imbalance addressed via PR-AUC (precision-recall focused metric) instead of accuracy, as it better evaluates performance on rare events.
+- **Hypothesis testing** (informal): visual inspection and feature importance confirmed relationships (e.g. higher `DeviceInfo_risk` → higher fraud probability).
+- **Smoothing in encoding**: Bayesian-inspired smoothing (alpha/beta priors) in `DeviceRiskEncoder` prevents overfitting on rare devices.
+
+These foundations ensured robust, interpretable results despite noisy, anonymized data.
+
+## AI Assistant Integration
+
+Generative AI tools (primarily Grok by xAI) were integrated throughout the development process:
+- Code suggestions & debugging: AI assisted in writing/optimizing custom transformers (e.g. `RowFeatureEngineer`, `DeviceRiskEncoder`).
+- Documentation & storytelling: AI helped draft README sections, refine explanations, and structure hypotheses.
+- Error resolution: AI clarified pipeline leakage risks and suggested fixes (e.g. train-only fitting).
+
+AI accelerated iteration while all final code and decisions were manually reviewed and adapted.
+
+## Data Management Practices
+
+Data handling followed best practices for reproducibility and quality:
+
+- **Collection**: Downloaded from Kaggle (public IEEE-CIS Fraud Detection competition) — no additional data gathered.
+- **Cleaning & Processing**: Missing values handled via median/mode imputation (numerics/categoricals), custom missing flags created, high-cardinality columns encoded or grouped.
+- **Storage & Versioning**: Raw data stored locally (not in repo due to size); processed features saved via `joblib` bundle (`lgbm_bundle.joblib`); Git used for code versioning.
+- **Pipeline**: End-to-end reproducible pipeline (sanitizer → converters → engineer → preprocessor) ensures consistent train/test transformations.
+
+## Domain Applications of Fraud Analytics
+
+Fraud detection is a cornerstone application of data analytics in **finance** and **e-commerce**:
+- Banks and payment processors use similar models to prevent card-not-present fraud, account takeover, and money laundering.
+- E-commerce platforms (Amazon, PayPal, Stripe) apply transaction scoring to reduce chargebacks and protect merchants.
+- AI/ML improves real-time decisioning, reduces manual reviews, and adapts to evolving fraud patterns (adversarial drift).
+
+This project demonstrates how anonymized transaction + device data can power scalable, high-precision fraud systems while highlighting the need for fairness and explainability in production.
+
+## Project Plan & Maintenance Roadmap
+
+**Development Phases** (completed):
+1. Data exploration & EDA (missingness, risk segments)
+2. Feature engineering & pipeline build
+3. Model comparison & Optuna tuning
+4. Final bundle & validation
+
+**Future Maintenance & Evaluation Plan**:
+- **Monitoring**: Track PR-AUC, false positive rate on new transaction batches; detect concept drift via distribution shifts in `TransactionDT`, `DeviceInfo`.
+- **Retraining**: Schedule quarterly model refits on fresh data (re-fit encoders on recent train split).
+- **Updates**: Add new features (e.g. time-of-day cyclical encoding, interaction terms); experiment with ensemble/stacking.
+- **Evaluation**: Use business metrics (e.g. cost of false positives vs. fraud prevented); conduct periodic fairness audits.
+- **Deployment considerations**: API endpoint with threshold tuning; human-in-the-loop for high-risk scores.
+
+## Limitations, Alternatives & Future Learning
+
+**Limitations**:
+- Heavy anonymization limits interpretability of V-features.
+- Sparse identity data (~24% coverage) reduces signal in many rows.
+- Small validation PR-AUC lift from baseline highlights dataset difficulty.
+- No real-time drift simulation or production-scale testing.
+
+**Alternatives Considered**:
+- XGBoost/CatBoost instead of LightGBM (similar performance, slower training).
+- Neural networks (TabNet) for automatic feature interactions (higher compute).
+- Simpler imputation (mean vs. median) — median chosen for robustness.
+
+**Future Learning**:
+- Explore SHAP/LIME for better explainability.
+- Study adversarial robustness and drift detection libraries (Alibi Detect, Evidently).
+- Experiment with deep learning fraud models (e.g. Transformer-based).
+- Deepen knowledge of fairness metrics and debiasing techniques.
+
+This project strengthened my skills in pipeline design, leakage prevention, and imbalance handling — preparing me for more complex real-world analytics tasks.
 
 ---
 ## Ethical Considerations, Data Privacy & Governance
