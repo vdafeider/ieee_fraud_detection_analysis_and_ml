@@ -10,6 +10,21 @@ The goal is to predict whether an online transaction is fraudulent (`isFraud`) u
 
 The notebook performs deep EDA, feature engineering, careful leakage-free preprocessing, model comparison, hyperparameter optimization with Optuna, and final LightGBM training — achieving strong validation **PR-AUC ~0.575**.
 
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Objectives](#objectives)
+- [Dataset](#dataset)
+- [Notebook Structure](#notebook-structure)
+- [Key Findings](#key-findings)
+- [Machine Learning Model](#machine-learning-model)
+- [Requirements](#requirements)
+- [How to Reproduce](#how-to-reproduce)
+- [Contributing](#contributing)
+- [License](#license)
+- [Credits and Acknowledgements](#credits-and-acknowledgements)
+- [Author](#author)
+  
 ---
 ## Project Overview
 
@@ -105,7 +120,7 @@ Online payment fraud causes massive financial losses every year. This project an
 ---
 ## Machine Learning Model
 **Final choice:** LightGBM  
-**Validation metric (focus):** PR-AUC ≈ **0.575** (strong improvement over baseline ~0.03–0.05)  
+**Validation metric (focus):** PR-AUC ≈ **0.575** (strong improvement over baseline ~0.03)  
 **Best parameters found via Optuna:**
 ```text
 num_leaves:        94
@@ -191,6 +206,8 @@ This project is licensed under the **MIT License**.
 The content of this project represents the understanding gained from the walkthrough projects provided by **Code Institute**.  
 
 Issues encountered during development were resolved by **leveraging official documentation, community forums, and best practices** from resources including Stack Overflow, Python library documentation, and YouTube tutorials. 
+
+Great thanks to Dataset owners for data share: Vesta Corporation via IEEE-CIS Fraud Detection @ Kaggle
 
 A huge thanks to **John Anih**, who introduced me to this course.
 
