@@ -4,7 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
 [![Python Version](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/downloads/release/python-3130/)
 
-This repository contains a comprehensive **Exploratory Data Analysis (EDA)** and **machine learning solution** for the [IEEE-CIS Fraud Detection](https://www.kaggle.com/competitions/ieee-fraud-detection) Kaggle competition.  
+This repository contains a comprehensive **Exploratory Data Analysis (EDA)** and **machine learning solution** for the [IEEE-CIS Fraud Detection](https://www.kaggle.com/competitions/ieee-fraud-detection) Kaggle competition.
+
 The goal is to predict whether an online transaction is fraudulent (`isFraud`) using real-world e-commerce transaction data provided by Vesta Corporation.
 
 The notebook performs deep EDA, feature engineering, careful leakage-free preprocessing, model comparison, hyperparameter optimization with Optuna, and final LightGBM training — achieving strong validation **PR-AUC ~0.575**.
@@ -80,11 +81,19 @@ Online payment fraud causes massive financial losses every year. This project an
 
 ---
 ## Key Findings
-- Only ~3.5% of transactions are fraudulent → strong imbalance  
-- Certain **ProductCD** values (especially 'C' & 'R') and some email providers are much riskier  
+- Only ~3.5% of transactions are fraudulent → strong imbalance 
+- Certain **ProductCD** values (especially 'C' & 'R') and some email providers are much riskier
+- The dataset exhibits a high degree of missingness, affecting the majority of features
+- Missing identity data itself is predictive
 - **DeviceInfo** fingerprinting + rare devices → strong fraud signal   
-- Missing identity data itself is predictive (absence correlates with higher fraud)  
 - Strongest engineered feature: **device-level target-encoded risk**
+- Mac devices were the most free of fraud. "Others", "unknown" and Android are the most fraudulent, but no extreme skeve
+- Screen sizes 1024x600 and 0x0 have the most Fraud risk
+- The ‘Outlook’ email provider and the ‘.se’ and ‘.com’ domains are the most fraud-related
+- Missing receiver email information is not a predictor of fraud
+
+  #### Few visuals from the notebook attached below
+
 
 ![Example Visual – Fraud by ProductCD](./images/img1.png)
 
@@ -158,7 +167,7 @@ Output: columns isFraud_float (probability) + isFraud (binary @ threshold ≈0.2
 Feel free to fork and submit PRs.
 Especially welcome:
 * Additional strong features (time-based, card grouping, interaction terms)
-* Alternative models (TabNet, NN, stacking)
+* Alternative models (TabNet, NN, stacking) or Deep Learning
 * Better handling of high-cardinality categoricals
 
 Please follow best practices:
