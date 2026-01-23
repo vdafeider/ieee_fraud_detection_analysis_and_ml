@@ -263,7 +263,7 @@ This project addresses real-world online payment fraud detection using the IEEE-
 
 **Key Hypotheses** (tested in notebook):
 - H1: Transactions lacking identity information (`has_identity` = 0) show significantly higher fraud rates.
-  → H not validated: Transactions with available identity information exhibit a significantly higher fraud rate (≈8%) compared to those without identity data (≈2%).
+  → H Rejected: Transactions with available identity information exhibit a significantly higher fraud rate (≈8%) compared to those without identity data (≈2%).
 - H2: Rare or unknown `DeviceInfo` values correlate with elevated fraud probability.
   → Validated: `DeviceInfo_risk` became the dominant feature; rare devices strongly signal risk.
 - H3: Unusual screen resolutions (e.g. "0x0" or low-res) are associated with fraud.
