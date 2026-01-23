@@ -18,6 +18,7 @@ The notebook performs deep EDA, feature engineering, careful leakage-free prepro
 - [Notebook Structure](#notebook-structure)
 - [Key Findings](#key-findings)
 - [Machine Learning Model](#machine-learning-model)
+- [Ethical Considerations, Data Privacy & Governance](#ethical-considerations-data-privacy--governance)
 - [Requirements](#requirements)
 - [How to Reproduce](#how-to-reproduce)
 - [Contributing](#contributing)
@@ -139,6 +140,40 @@ Inference is bundled into one .joblib file containing:
 * Trained LightGBM model
 
 ---
+## Ethical Considerations, Data Privacy & Governance
+
+### Ethical Issues, Data Privacy, and Governance in Project Methodology
+
+This project uses the publicly available, anonymized IEEE-CIS Fraud Detection dataset from Kaggle (Vesta Corporation). Personal identifiers (names, exact IPs, card numbers, emails) have been removed, pseudonymized, or hashed.
+
+**Main safeguards applied:**
+- No re-identification attempts or external data linkage
+- Strictly educational/research purpose — no real-world or commercial deployment
+- Data minimization: only the public subset is used
+- Full transparency: preprocessing, features, model choices, and limitations documented in the notebook
+- Fairness consideration: PR-AUC metric and time-based validation to handle imbalance and temporal effects
+- Governance: MIT open-source license, reproducible pipeline (`lgbm_bundle.joblib`), no decisions affecting real people
+
+Although anonymized, behavioral and device fingerprints remain. Theoretical re-identification risk via external linkage keeps this project strictly academic.
+
+### Legal and Social Implications
+
+**Legal context**  
+The dataset is governed by Kaggle’s terms, allowing research use but prohibiting reverse-engineering of personal information. While no direct legal obligations apply here, real-world systems using similar data would need to comply with:
+- GDPR (EU) — pseudonymized data → purpose limitation, DPIA
+- CCPA/CPRA (US) — consumer rights to know/delete/opt-out
+- PCI DSS — payment security standards
+- AML/CTF regulations — mandatory audits for banking fraud models
+
+This notebook highlights the importance of bias audits, explainability, human oversight, and access controls in production.
+
+**Social implications**  
+**Positive:** Reduces financial crime, protects users/merchants, lowers costs, enables frictionless legitimate payments.  
+**Risks:** False positives may cause financial exclusion (especially for minorities or unusual devices), disparate impact from biased signals (domains, devices, geographies), chilling effect from fingerprinting, and lack of transparency in decisions.
+
+In summary, this academic work carries minimal risk but demonstrates why real fraud-detection systems require strong ethical, privacy-by-design, and fairness frameworks.
+
+---
 ## Requirements
 
 manually in terminal:
@@ -173,7 +208,7 @@ jupyter notebook
 ```
 Open `Transaction_Fraud_Detection_ETA_ML.ipynb` → **Restart & Run All**.
 
-### *4. Generate test predictions**
+### **4. Generate test predictions**
 Notebook already contains final prediction code using saved bundle
 Output: columns isFraud_float (probability) + isFraud (binary @ threshold ≈0.27)
 
