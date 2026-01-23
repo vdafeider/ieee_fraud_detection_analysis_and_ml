@@ -402,7 +402,8 @@ manually in terminal:
   optuna>=3.0 \
   scikit-learn>=1.3 \
   joblib>=1.2 \
-  altair>=5.0
+  altair>=5.0 \
+  scipy>=1.10.0
 ```
 
 ---
