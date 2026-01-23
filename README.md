@@ -51,7 +51,7 @@ Online payment fraud causes massive financial losses every year. This project an
 - Analyze missingness patterns (especially identity table — only ~24% coverage)
 - Discover high-risk segments (product codes, email domains, device types, amounts, time-of-day)
 - Engineer safe, leakage-free features (device risk encoding, email domain grouping, row-wise statistics)
-- Build and tune gradient boosting models with focus on **PR-AUC** (suitable for heavy imbalance)
+- Build and tune ML models with focus on **PR-AUC** (suitable for heavy imbalance)
 - Create production-ready inference bundle (preprocessor + model)
 
 ---
