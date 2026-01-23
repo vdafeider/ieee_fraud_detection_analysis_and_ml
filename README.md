@@ -212,6 +212,12 @@ Open `Transaction_Fraud_Detection_ETA_ML.ipynb` → **Restart & Run All**.
 Notebook already contains final prediction code using saved bundle
 Output: columns isFraud_float (probability) + isFraud (binary @ threshold ≈0.27)
 
+###
+**To open Power Bi dashboard in app:**
+1. Install **Power BI Desktop** (version 2.149.1429.0 recommended) from the [official website](https://www.microsoft.com/en-us/download/details.aspx?id=58494).  
+2. Open the file: `dataset_overview.pbix`  
+3. To update the dataset, reconnect the train `.csv` files from the Kaggle using **Power Query**.
+
 ---
 ## Contributing
 Feel free to fork and submit PRs.
