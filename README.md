@@ -210,14 +210,14 @@ Feature engineering was one of the most critical steps in improving model perfor
    - Categorical columns → most frequent imputation + OneHotEncoder (with min_frequency=50 for rare category grouping)
    - All wrapped in ColumnTransformer for selective processing
 
-### Leakage & Time Protections (from notebook)
+### Leakage & Time Protections
 
 - DeviceRiskEncoder and frequency maps fitted only on train (`.fit(X_tr_raw, y_tr)`)
 - Time-based split: first 80% train, last 20% validation
 - No global/target statistics computed on full (train+test) data
 - Test/validation transformation uses `.transform()` only (no refit)
 
-### Most Valuable Engineered Features (observed in notebook experiments)
+### Most Valuable Engineered Features
 
 - `DeviceInfo_risk` — dominant fraud signal
 - Missing identity indicators (`has_identity`, `missing_ratio_id`, `high_missing_any`)
