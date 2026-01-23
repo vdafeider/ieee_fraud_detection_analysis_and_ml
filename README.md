@@ -354,7 +354,9 @@ This project is licensed under the **MIT License**.
 ## Credits and Acknowledgements
 The content of this project represents the understanding gained from the walkthrough projects provided by **Code Institute**.  
 
-Issues encountered during development were resolved by **leveraging official documentation, community forums, and best practices** from resources including Stack Overflow, Python library documentation, and YouTube tutorials. 
+Issues encountered during development were resolved by **leveraging official documentation, community forums, and best practices** from resources including Stack Overflow, Python library documentation, and YouTube tutorials.
+
+Generative AI used for narrative/summary generations and debuging.
 
 Great thanks to Dataset owners for data share: Vesta Corporation via IEEE-CIS Fraud Detection @ Kaggle
 
