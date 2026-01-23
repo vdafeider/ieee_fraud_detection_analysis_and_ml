@@ -313,11 +313,14 @@ This project demonstrates how anonymized transaction + device data can power sca
 
 ## Project Plan & Maintenance Roadmap
 
-**Development Phases** (completed):
+**Development Phases** :
 1. Data exploration & EDA (missingness, risk segments)
 2. Feature engineering & pipeline build
 3. Model comparison & Optuna tuning
 4. Final bundle & validation
+
+Trello planning [link](https://trello.com/invite/b/69733a3636066967af2d9443/ATTI5b23caf66d4433a20224a9c8f86a82c7DECE9979/ieee-fraud-detection-da-ml)
+   
 
 **Future Maintenance & Evaluation Plan**:
 - **Monitoring**: Track PR-AUC, false positive rate on new transaction batches; detect concept drift via distribution shifts in `TransactionDT`, `DeviceInfo`.
