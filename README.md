@@ -1,12 +1,13 @@
 # Bank Transfer Fraud Detection – IEEE-CIS Kaggle Competition
-![Project Banner](../images/ieee_logo.png)  
+![Project Banner](./images/ieee_logo.png)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
 [![Python Version](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/downloads/release/python-3130/)
 
 This repository contains a comprehensive **Exploratory Data Analysis (EDA)** and **machine learning solution** for the [IEEE-CIS Fraud Detection](https://www.kaggle.com/competitions/ieee-fraud-detection) Kaggle competition.  
 The goal is to predict whether an online transaction is fraudulent (`isFraud`) using real-world e-commerce transaction data provided by Vesta Corporation.
 
-The notebook performs deep EDA, smart feature engineering, careful leakage-free preprocessing, model comparison, hyperparameter optimization with Optuna, and final LightGBM training — achieving strong validation **PR-AUC ~0.575**.
+The notebook performs deep EDA, feature engineering, careful leakage-free preprocessing, model comparison, hyperparameter optimization with Optuna, and final LightGBM training — achieving strong validation **PR-AUC ~0.575**.
 
 ---
 ## Project Overview
@@ -19,12 +20,14 @@ Online payment fraud causes massive financial losses every year. This project an
 - **Scikit-learn** — preprocessing, metrics, pipelines  
 - **LightGBM**, **XGBoost**, **CatBoost** — gradient boosting models  
 - **Optuna** — hyperparameter tuning  
-- **Joblib** — model & preprocessor persistence  
+- **Joblib** — model & preprocessor persistence
+- **Power Bi** - Quick Dataset overview Dashboard
+- **Figma** - Dashboard layout design
 
 **Key components:**
-- Datasets: `train_transaction.csv`, `train_identity.csv`, `test_transaction.csv`, `test_identity.csv`
+- Datasets: `train_transaction.csv`, `train_identity.csv`, `test_transaction.csv`, `test_identity.csv` (not availiable on repository, download from Kaggle ~ 1Gb)
 - Main Notebook: `Transaction_Fraud_Detection_ETA_ML.ipynb`
-
+- Power Bi Dashborad: `dataset_overview.pbix` [open on server](https://app.powerbi.com/view?r=eyJrIjoiZjFhMWY4NGMtNzI3NC00ZmVhLThmODQtMjJmMjVmYTNmMjllIiwidCI6IjU5YTZhM2Y5LTMwYWItNDBmZi1hNDZhLWYzZThkZDU4OGZhOSIsImMiOjl9)
 ---
 ## Objectives
 - Understand fraud rate (~3.5%) and severe class imbalance
@@ -78,15 +81,17 @@ Online payment fraud causes massive financial losses every year. This project an
 ---
 ## Key Findings
 - Only ~3.5% of transactions are fraudulent → strong imbalance  
-- Transactions **with identity information** show significantly **lower fraud rate**  
 - Certain **ProductCD** values (especially 'C' & 'R') and some email providers are much riskier  
-- **DeviceInfo** fingerprinting + rare devices → strong fraud signal  
-- Very high **TransactionAmt** outliers appear more often in fraud  
+- **DeviceInfo** fingerprinting + rare devices → strong fraud signal   
 - Missing identity data itself is predictive (absence correlates with higher fraud)  
 - Strongest engineered feature: **device-level target-encoded risk**
 
-![Example Visual – Fraud by ProductCD](./images/fraud_by_productcd_example.png)  
-*(more visuals inside notebook — correlation heatmaps, boxplots, time patterns, etc.)*
+![Example Visual – Fraud by ProductCD](./images/img1.png)
+
+![Example Visual – Fraud by ProductCD](./images/img2.png)  
+
+![Example Visual – Fraud by ProductCD](./images/img3.png)  
+*(more visuals inside notebook — correlation heatmaps, boxplots etc.)*
 
 ---
 ## Machine Learning Model
@@ -103,3 +108,88 @@ reg_alpha:         0.001
 reg_lambda:        0.558
 min_child_samples: 65
 n_estimators:      583 (early stopping)
+```
+Inference is bundled into one .joblib file containing:
+* Device risk encoder (target encoding fitted on train)
+* Full sklearn pipeline (sanitizer → converters → engineer → preprocessor)
+* Trained LightGBM model
+
+---
+## Requirements
+
+manually in terminal:
+```bash
+  pip install \
+  pandas>=2.0 \
+  numpy>=1.24 \
+  seaborn>=0.12 \
+  matplotlib>=3.7 \
+  lightgbm>=4.0 \
+  xgboost>=2.0 \
+  catboost>=1.2 \
+  optuna>=3.0 \
+  scikit-learn>=1.3 \
+  joblib>=1.2 \
+  altair>=5.0
+```
+
+---
+## How to Reproduce
+### **1. Clone the repository**
+```bash
+git clone https://github.com/vdafeider/ieee_fraud_detection_analysis_and_ml.git
+cd ieee_fraud_detection_analysis_and_ml
+```
+### **2. Install dependencies**
+See above [requirements](#Requirements)
+
+### **3. Run the notebook**
+```bash
+jupyter notebook
+```
+Open `Transaction_Fraud_Detection_ETA_ML.ipynb` → **Restart & Run All**.
+
+### *4. Generate test predictions**
+Notebook already contains final prediction code using saved bundle
+Output: columns isFraud_float (probability) + isFraud (binary @ threshold ≈0.27)
+
+---
+## Contributing
+Feel free to fork and submit PRs.
+Especially welcome:
+* Additional strong features (time-based, card grouping, interaction terms)
+* Alternative models (TabNet, NN, stacking)
+* Better handling of high-cardinality categoricals
+
+Please follow best practices:
+- Fork the repository
+- Create a feature branch
+- Commit with clear messages
+- Open a Pull Request
+
+If you plan to contribute regularly, consider adding:
+- `CONTRIBUTING.md`
+- `CODE_OF_CONDUCT.md`
+
+---
+
+## License
+This project is licensed under the **MIT License**.
+
+---
+
+## Credits and Acknowledgements
+The content of this project represents the understanding gained from the walkthrough projects provided by **Code Institute**.  
+
+Issues encountered during development were resolved by **leveraging official documentation, community forums, and best practices** from resources including Stack Overflow, Python library documentation, and YouTube tutorials. 
+
+A huge thanks to **John Anih**, who introduced me to this course.
+
+---
+
+## Author
+**Volodymyr Babunych**  
+📧 vbabunych@gmail.com  
+📍 United Kingdom  
+🗓️ January 23, 2026
+
