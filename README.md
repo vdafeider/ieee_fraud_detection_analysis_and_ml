@@ -18,6 +18,7 @@ The notebook performs deep EDA, feature engineering, careful leakage-free prepro
 - [Notebook Structure](#notebook-structure)
 - [Key Findings](#key-findings)
 - [Machine Learning Model](#machine-learning-model)
+- [Feature Engineering Approach](feature-engineering-approach)
 - [Ethical Considerations, Data Privacy & Governance](#ethical-considerations-data-privacy--governance)
 - [Requirements](#requirements)
 - [How to Reproduce](#how-to-reproduce)
@@ -138,6 +139,112 @@ Inference is bundled into one .joblib file containing:
 * Device risk encoder (target encoding fitted on train)
 * Full sklearn pipeline (sanitizer → converters → engineer → preprocessor)
 * Trained LightGBM model
+  
+---
+
+## Feature Engineering Approach
+
+Feature engineering was one of the most critical steps in improving model performance on this highly anonymized, wide, and noisy dataset. All transformations were designed to be leakage-free, especially important given the time-series nature of transactions (`TransactionDT`) and the severe class imbalance.
+
+### Guiding Principles
+
+- Avoid any target leakage: target encoding and frequency maps fitted only on training data
+- Respect temporal order: time-based split used for validation; encoders fitted only on train fold
+- Handle high missingness intelligently rather than simple imputation
+- Exploit domain knowledge from public kernels (email domains, device fingerprints, resolution parsing)
+- Create interpretable + high-signal features while keeping cardinality manageable
+
+### Core Custom Transformers
+
+1. **DeviceRiskEncoder**
+
+   - Target encoding of `DeviceInfo` column (smoothed Bayesian mean fraud rate per unique device string)
+   - Fitted exclusively on training data (using alpha/beta smoothing with global fraud rate fallback)
+   - Produces: `DeviceInfo_risk` (encoded fraud probability)
+   - Impact: one of the strongest signals — rare/unknown devices strongly correlate with fraud
+
+2. **TFBooleanConverter**
+
+   - Converts M1–M9 match columns ("T" / "F" / NaN → 1.0 / 0.0 / NaN)
+   - Automatically detects columns containing only {"T", "F"} (non-null)
+   - Simple but necessary to make these categorical match fields numeric for boosting
+
+3. **RowFeatureEngineer**
+
+   - **DeviceInfo**
+     - `DeviceInfo_freq` — normalized frequency (from train fit)
+     - `DeviceInfo_is_missing` — binary flag (1 if NaN)
+
+   - **Browser/OS (id_30, id_31)**
+     - `id_30_os_family` — extracted OS family: "windows", "mac", "ios", "android", "linux" or "unknown"
+     - `id_31_freq` — normalized frequency of id_31 values
+     - `id_31_is_missing` — binary flag (1 if NaN)
+
+   - **Screen resolution (id_33)**
+     - `id_33_width`, `id_33_height` — numeric parsed values
+     - `id_33_is_invalid` — flag (1 if exactly "0x0")
+
+   - **Match status (id_34)**
+     - `id_34_ord` — numeric value extracted from "match_status:XX" pattern
+
+   - **Email domains (P_emaildomain, R_emaildomain)**
+     - `{P,R}_emaildomain_is_missing` — binary flag (1 if NaN)
+     - `{P,R}_emaildomain_domain` / `{P,R}_emaildomain_provider` — root part before first dot
+     - `{P,R}_emaildomain_tld` — TLD part after first dot
+     - `{P,R}_emaildomain_provider_freq` — normalized frequency (from train fit)
+
+   - **Identity presence**
+     - `has_identity` — 1 if `DeviceType` is not NaN (proxy for identity block presence)
+
+   - **Missing ratios**
+     - `missing_ratio_V` — mean missing in V1–V339 columns
+     - `missing_ratio_D` — mean missing in D1–D15 columns
+     - `missing_ratio_id` — mean missing in id_* columns
+     - `high_missing_any` — 1 if any ratio > 0.7
+
+   - **Cleanup**: drops original raw high-cardinality columns (`DeviceInfo`, `id_30`, `id_31`, `id_33`, `id_34`, `P_emaildomain`, `R_emaildomain`)
+
+4. **Preprocessing Pipeline (build_preprocessor)**
+
+   - Numeric columns → median imputation + StandardScaler
+   - Categorical columns → most frequent imputation + OneHotEncoder (with min_frequency=50 for rare category grouping)
+   - All wrapped in ColumnTransformer for selective processing
+
+### Leakage & Time Protections (from notebook)
+
+- DeviceRiskEncoder and frequency maps fitted only on train (`.fit(X_tr_raw, y_tr)`)
+- Time-based split: first 80% train, last 20% validation
+- No global/target statistics computed on full (train+test) data
+- Test/validation transformation uses `.transform()` only (no refit)
+
+### Most Valuable Engineered Features (observed in notebook experiments)
+
+- `DeviceInfo_risk` — dominant fraud signal
+- Missing identity indicators (`has_identity`, `missing_ratio_id`, `high_missing_any`)
+- Email domain provider/TLD + their frequencies
+- `id_33_is_invalid` and parsed resolution dimensions (unusual sizes like 0×0 linked to fraud)
+- Row-level missingness aggregates (`missing_ratio_V`, `missing_ratio_D`)
+
+### Preprocessing Pipeline Integration
+
+All steps were encapsulated in a scikit-learn Pipeline:
+
+- `PandasSanitizer` → clean column names, fix types
+- `TFBooleanConverter` → T/F → 1.0/0.0
+- `RowFeatureEngineer` → missing ratios, resolution parsing, email domains, OS family
+- `ColumnTransformer` → different handling for numeric/categorical/missing
+- Final scaling (StandardScaler for numerics)
+
+This pipeline ensures reproducibility and prevents leakage when transforming test data.
+
+### Impact
+
+The strongest single contributors to PR-AUC improvement were:
+
+- Device risk encoding (dominant signal)
+- Missing identity & high-missing flags
+- Email domain provider frequencies
+- Resolution invalid flag & parsing
 
 ---
 ## Ethical Considerations, Data Privacy & Governance
