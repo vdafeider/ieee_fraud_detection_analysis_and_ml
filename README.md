@@ -270,6 +270,8 @@ This project addresses real-world online payment fraud detection using the IEEE-
   → Validated: `id_33_is_invalid` flag and parsed dimensions show clear fraud elevation.
 - H4: Certain email providers/TLDs (e.g. Outlook, .se) are riskier than others.
   → Partially validated: frequency-encoded providers and TLDs contribute meaningfully.
+- H5: The distribution of transaction amounts is identical between fraudulent and non-fraudulent transactions.
+  → Validated: No strong evidence that the typical transaction amounts differ between fraud and non-fraud cases.
 
 These hypotheses guided feature engineering and model interpretation.
 
