@@ -467,7 +467,6 @@ Generative AI used for narrative/summary generations and debuging.
 
 Great thanks to Dataset owners for data share: Vesta Corporation via IEEE-CIS Fraud Detection @ Kaggle
 
-A huge thanks to **John Anih**, who introduced me to this course.
 
 ---
 
